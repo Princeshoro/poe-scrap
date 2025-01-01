@@ -5,16 +5,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 app = Flask(__name__)
 
 # Set up Selenium options to run headless (without opening a browser window)
 chrome_options = Options()
 chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--disable-gpu")
-
-# Path to your chromedriver (update this to your chromedriver location)
-driver_path = "/path/to/chromedriver"  # Update this
 
 # Function to scrape Poe.com using Selenium
 def scrape_poe(query):
@@ -24,7 +24,8 @@ def scrape_poe(query):
 
     url = "https://poe.com/"
     
-    # Initialize Selenium WebDriver
+    # Initialize Selenium WebDriver with webdriver_manager to handle ChromeDriver
+    driver_path = ChromeDriverManager().install()
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.get(url)
