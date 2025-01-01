@@ -1,37 +1,48 @@
 import os
-import requests
-from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 
 app = Flask(__name__)
 
-# Function to scrape Poe.com
+# Set up Selenium options to run headless (without opening a browser window)
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-gpu")
+
+# Path to your chromedriver (update this to your chromedriver location)
+driver_path = "/path/to/chromedriver"  # Update this
+
+# Function to scrape Poe.com using Selenium
 def scrape_poe(query):
     # Check if query is asking for the creator
     if query.lower() == "who is your creator":
         return "My creator is Prince."
 
     url = "https://poe.com/"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-    }
+    
+    # Initialize Selenium WebDriver
+    service = Service(driver_path)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver.get(url)
 
-    # Send GET request to Poe
-    response = requests.get(url, headers=headers)
+    # Wait for the content to load (you can adjust this if needed)
+    driver.implicitly_wait(5)  # Wait for 5 seconds for content to load
 
-    # Parse the HTML response
-    soup = BeautifulSoup(response.text, "html.parser")
+    # Example of finding content (adjust this based on the actual structure of Poe)
+    content = driver.find_element(By.TAG_NAME, 'body').text  # Get all the body text
 
-    # Search for all text elements on the page (example: all divs, spans, etc.)
-    content_elements = soup.find_all(['div', 'span', 'p', 'h1', 'h2'])  # You can add more tags to search through
+    # Search through content
+    if query.lower() in content.lower():
+        return content.strip()
+    else:
+        return "No relevant content found for query."
 
-    # Check if any content contains the query
-    for element in content_elements:
-        if query.lower() in element.text.lower():  # Case-insensitive search
-            return element.text.strip()
-
-    # If no relevant content is found
-    return "No relevant content found for query."
+    # Close the browser after scraping
+    driver.quit()
 
 # API Endpoint
 @app.route('/api/poe', methods=['GET'])
