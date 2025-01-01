@@ -22,9 +22,10 @@ def scrape_poe(query):
     # Parse the HTML response
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Implement scraping logic here
-    content = soup.find('div', {'class': 'target-class'})  # Customize this part for actual scraping logic
+    # Example: Find text in a div with a specific class (adjust based on the actual HTML structure)
+    content = soup.find('div', {'class': 'some-target-class'})  # Update 'some-target-class' with the actual class you're targeting
 
+    # Check if content was found
     if content:
         return content.text.strip()
     else:
