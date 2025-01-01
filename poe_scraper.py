@@ -22,14 +22,16 @@ def scrape_poe(query):
     # Parse the HTML response
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Example: Find text in a div with a specific class (adjust based on the actual HTML structure)
-    content = soup.find('div', {'class': 'some-target-class'})  # Update 'some-target-class' with the actual class you're targeting
+    # Search for all text elements on the page (example: all divs, spans, etc.)
+    content_elements = soup.find_all(['div', 'span', 'p', 'h1', 'h2'])  # You can add more tags to search through
 
-    # Check if content was found
-    if content:
-        return content.text.strip()
-    else:
-        return "No relevant content found for query."
+    # Check if any content contains the query
+    for element in content_elements:
+        if query.lower() in element.text.lower():  # Case-insensitive search
+            return element.text.strip()
+
+    # If no relevant content is found
+    return "No relevant content found for query."
 
 # API Endpoint
 @app.route('/api/poe', methods=['GET'])
