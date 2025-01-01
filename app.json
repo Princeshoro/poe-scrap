@@ -1,17 +1,16 @@
-{
-  "name": "Poe Scraper Bot",
-  "description": "A Flask-based web scraper for Poe.com with an API endpoint.",
-  "repository": "https://github.com/Princeshoro/poe-scrap",
-  "keywords": ["python", "flask", "web scraping", "poe"],
-  "env": {
-    "FLASK_ENV": {
-      "description": "Environment mode",
-      "value": "production"
-    }
-  },
-  "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
-  ]
-}
+name: Poe Scraper Bot
+description: A Flask-based web scraper for Poe.com with an API endpoint.
+repository: "https://github.com/Princeshoro/poe-scrap"
+keywords:
+  - "python"
+  - "flask"
+  - "web scraping"
+  - "poe"
+env:
+  FLASK_ENV:
+    description: "Environment mode"
+    value: "production"
+buildpacks:
+  - { url: "heroku/python" }
+  - { url: "https://github.com/heroku/heroku-buildpack-google-chrome" }
+  - { url: "https://github.com/heroku/heroku-buildpack-chromedriver" }
